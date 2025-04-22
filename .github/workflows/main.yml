@@ -77,7 +77,6 @@ jobs:
       - run: |
           echo "keepalive" > keepalive
       - uses: stefanzweifel/git-auto-commit-action@v5.0.0
-        if: steps.check-commit.outputs.keep_alive == '1'
         with:
           branch: keepalive
           skip_checkout: true
