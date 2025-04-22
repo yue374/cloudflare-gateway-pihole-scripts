@@ -70,16 +70,16 @@ jobs:
   keepalive:
     runs-on: ubuntu-latest
     permissions:
-      actions: write
-      contents: read
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - run: |
           echo "keepalive" > keepalive
-      - uses: stefanzweifel/git-auto-commit-action@v5.0.0
+      - uses: stefanzweifel/git-auto-commit-action@v5.2.0
         with:
           branch: keepalive
           skip_checkout: true
           skip_dirty_check: true
+          file_pattern: '*keepalive'
           push_options: '--force'
           commit_message: keepalive
