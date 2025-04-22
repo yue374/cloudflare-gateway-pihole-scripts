@@ -75,12 +75,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: |
-          echo "keepalive" > keepalive
+          echo "keepalive" > ./keepalive
       - uses: stefanzweifel/git-auto-commit-action@v5.0.0
         with:
           branch: keepalive
           skip_checkout: true
           skip_dirty_check: true
           push_options: '--force'
-          file_pattern: 'keepalive'
+          file_pattern: './keepalive'
           commit_message: keepalive
