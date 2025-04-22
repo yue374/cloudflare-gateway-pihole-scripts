@@ -77,7 +77,7 @@ jobs:
       - name: Check commit
         id: check-commit
         run: |
-          curl -s -o "date" "https://raw.githubusercontent.com/${{ github.repository }}/refs/heads/keepalive/date" || true
+          curl -fSLs "https://raw.githubusercontent.com/${{ github.repository }}/refs/heads/keepalive/date" -o "date"
           f=date; t=$(date +%d/%m/%Y)
           if [[ -f $f ]]; then
             IFS=/ read d m y <"$f"
