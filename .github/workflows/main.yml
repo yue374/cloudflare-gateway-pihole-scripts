@@ -23,7 +23,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: "mrrfv/cloudflare-gateway-pihole-scripts"
-          ref: "efc75d31e0af3112a1e2f781b2463a5a6b2086ea"
+          ref: "v1"
 
       - name: Install Node.js
         uses: actions/setup-node@v4
@@ -74,4 +74,23 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
-      - uses: gautamkrishnar/keepalive-workflow@v2
+      - name: Check commit
+        run: |
+          wget -q "https://raw.githubusercontent.com/$repository/refs/heads/keepalive/date" -O "date"
+          f=date
+          if [[ -f $f ]];then
+            d=$(date -d $(sed 's#\([0-9]\{2\}\)/\([0-9]\{2\}\)/\([0-9]\{4\}\)#\3-\2-\1#' $f) +%s)
+            export keep_alive=$(( ( $(date +%s) - d ) / 86400 > 30 ))
+          else
+            date +%d/%m/%Y > $f; export keep_alive=0
+          fi
+        env:
+          repository: ${{ github.repository }}
+      - uses: stefanzweifel/git-auto-commit-action@v5.0.0
+        with:
+          branch: keepalive
+          skip_checkout: true
+          skip_dirty_check: true
+          push_options: '--force'
+          file_pattern: 'keepalive'
+          commit_message: keepalive
