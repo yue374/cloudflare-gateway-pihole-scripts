@@ -77,7 +77,7 @@ jobs:
       - name: Check commit
         id: check-commit
         run: |
-          curl -f "https://raw.githubusercontent.com/${{ github.repository }}/refs/heads/keepalive/date" -o "date"
+          set +e && curl -f "https://raw.githubusercontent.com/${{ github.repository }}/refs/heads/keepalive/date" -o "date" && set -e
           f=date; d=$(date +%d/%m/%Y)
           if [[ -s $f && $(<"$f") =~ ^[0-9]{2}/[0-9]{2}/[0-9]{4}$ ]]; then
             sd=$(<"$f")
