@@ -75,18 +75,24 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Check commit
-        id: check
+        id: check-commit
         run: |
           curl -s -o "date" "https://raw.githubusercontent.com/${{ github.repository }}/refs/heads/keepalive/date" || true
-          f=date
-          if [[ -f $f ]];then
-            d=$(date -d $(sed 's#\([0-9]\{2\}\)/\([0-9]\{2\}\)/\([0-9]\{4\}\)#\3-\2-\1#' $f) +%s)
-            export keep_alive=$(( ( $(date +%s) - d ) / 86400 > 30 ))
+          f=date; t=$(date +%d/%m/%Y)
+          if [[ -f $f ]]; then
+            IFS=/ read d m y <"$f"
+            diff=$(( ( $(date +%s) - $(date -d "$y-$m-$d" +%s) )/86400 ))
           else
-            date +%d/%m/%Y > $f; export keep_alive=0
+            diff=0
           fi
+          if (( diff>30 )); then
+            keep_alive=1; echo "$t" >"$f"
+          else
+            keep_alive=0; (( diff==0 )) && echo "$t" >"$f"
+          fi
+          export keep_alive
       - uses: stefanzweifel/git-auto-commit-action@v5.0.0
-        if: ${{ needs.check.outputs.keep_alive == 1 }}
+        if: steps.check-commit.outputs.keep_alive == '1'
         with:
           branch: keepalive
           skip_checkout: true
